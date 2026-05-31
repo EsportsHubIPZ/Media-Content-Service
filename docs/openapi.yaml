@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: Media/Content Service API
+  version: 1.0.0
+  description: Sync APIs for managing media uploads and news content for the Esports Hub Platform.
+paths:
+  /api/v1/media/upload:
+    post:
+      summary: Upload a media file
+      description: Uploads a file (e.g., match screenshot) to object storage and saves metadata.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                reference_id:
+                  type: string
+                  format: uuid
+                  description: Optional ID (e.g., match_id)
+      responses:
+        '201':
+          description: File successfully uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaAsset'
+        '400':
+          description: Invalid file type or size
+  /api/v1/media/{id}:
+    get:
+      summary: Get media metadata
+      description: Retrieve metadata and access URL for a specific media asset.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaAsset'
+        '404':
+          description: Media not found
+  /api/v1/news:
+    get:
+      summary: Get news feed
+      description: Retrieve a paginated list of published news articles.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: A list of news articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NewsArticle'
+    post:
+      summary: Publish a new article
+      description: Creates a new news article (Admin only).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsArticleCreate'
+      responses:
+        '201':
+          description: Article published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsArticle'
+        '403':
+          description: Forbidden (Not an admin)
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    MediaAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        file_path:
+          type: string
+        mime_type:
+          type: string
+        file_size_bytes:
+          type: integer
+        uploaded_at:
+          type: string
+          format: date-time
+    NewsArticle:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        author_id:
+          type: string
+          format: uuid
+        published_at:
+          type: string
+          format: date-time
+    NewsArticleCreate:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        cover_image_id:
+          type: string
+          format: uuid

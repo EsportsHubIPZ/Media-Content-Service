@@ -1,0 +1,44 @@
+<mxfile host="app.diagrams.net" version="21.0.0" type="device">
+  <diagram id="erd_media" name="ERD">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- media_assets -->
+        <mxCell id="MA" value="&lt;b&gt;media_assets&lt;/b&gt;&lt;hr&gt;id (uuid) [PK]&lt;br&gt;user_id (uuid) [FK]&lt;br&gt;filename (varchar)&lt;br&gt;original_name (varchar)&lt;br&gt;s3_key (varchar)&lt;br&gt;file_size_bytes (bigint)&lt;br&gt;mime_type (varchar)&lt;br&gt;asset_type (varchar)&lt;br&gt;reference_id (uuid)&lt;br&gt;uploaded_at (timestamp)" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="50" y="50" width="240" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- news_articles -->
+        <mxCell id="NA" value="&lt;b&gt;news_articles&lt;/b&gt;&lt;hr&gt;id (uuid) [PK]&lt;br&gt;author_id (uuid) [FK]&lt;br&gt;title (varchar)&lt;br&gt;summary (varchar)&lt;br&gt;content (text)&lt;br&gt;cover_image_id (uuid) [FK]&lt;br&gt;status (varchar)&lt;br&gt;published_at (timestamp)&lt;br&gt;created_at (timestamp)" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="50" y="320" width="240" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- article_tags -->
+        <mxCell id="AT" value="&lt;b&gt;article_tags&lt;/b&gt;&lt;hr&gt;article_id (uuid) [PK, FK]&lt;br&gt;tag_id (uuid) [PK, FK]" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="320" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- news_tags -->
+        <mxCell id="NT" value="&lt;b&gt;news_tags&lt;/b&gt;&lt;hr&gt;id (uuid) [PK]&lt;br&gt;name (varchar)" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="620" y="320" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Relations (Orthogonal X/Y) -->
+        <mxCell id="Rel1" edge="1" parent="1" source="NA" target="MA" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="Rel2" edge="1" parent="1" source="AT" target="NA" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="Rel3" edge="1" parent="1" source="AT" target="NT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

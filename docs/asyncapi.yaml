@@ -1,0 +1,47 @@
+asyncapi: 3.0.0
+info:
+  title: Media/Content Service Async API
+  version: 1.0.0
+  description: Asynchronous events published by the Media/Content Service via RabbitMQ.
+channels:
+  news.events:
+    address: esports.news.exchange
+    messages:
+      newsPublished:
+        $ref: '#/components/messages/NewsPublished'
+operations:
+  sendNewsPublished:
+    action: send
+    channel:
+      $ref: '#/channels/news.events'
+    messages:
+      - $ref: '#/components/messages/NewsPublished'
+components:
+  messages:
+    NewsPublished:
+      name: NewsPublished
+      title: News Published Event
+      summary: Event emitted when a new news article is published.
+      payload:
+        type: object
+        properties:
+          event_id:
+            type: string
+            format: uuid
+          event_type:
+            type: string
+            const: NewsPublished
+          timestamp:
+            type: string
+            format: date-time
+          data:
+            type: object
+            properties:
+              article_id:
+                type: string
+                format: uuid
+              title:
+                type: string
+              author_id:
+                type: string
+                format: uuid

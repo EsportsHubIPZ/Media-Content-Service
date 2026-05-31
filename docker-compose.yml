@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  media-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: media_service
+    ports:
+      - "8006:8000"
+    environment:
+      - DATABASE_URL=postgresql://media_user:password@media-db:5432/media_db
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET_NAME=media-bucket
+    depends_on:
+      media-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - esports_network
+
+  media-db:
+    image: postgres:15-alpine
+    container_name: media_db
+    environment:
+      POSTGRES_USER: media_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: media_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - media_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U media_user -d media_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - esports_network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - esports_network
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - esports_network
+
+networks:
+  esports_network:
+    driver: bridge
+
+volumes:
+  media_db_data:
+  minio_data:
